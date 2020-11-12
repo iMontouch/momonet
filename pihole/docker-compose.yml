@@ -31,7 +31,8 @@ services:
       - NET_ADMIN
     restart: unless-stopped
     networks:
-      - vlan
+      vlan:
+        ipv4_address: 192.168.178.200
 networks:
   vlan:
     external:
