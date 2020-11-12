@@ -15,7 +15,7 @@ services:
     environment:
       TZ: 'Europe/Berlin'
       DNS1: '1.1.1.1'
-      DNS2: '192.168.178.1'
+      DNS2: '8.8.8.8'
       DNS_BOGUS_PRIV: 'false'
       DNS_FQDN_REQUIRED: 'false'
       CONDITIONAL_FORWARDING: 'true'
@@ -27,8 +27,6 @@ services:
     volumes:
       - './etc-pihole/:/etc/pihole/'
       - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
-    # Recommended but not required (DHCP needs NET_ADMIN)
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
