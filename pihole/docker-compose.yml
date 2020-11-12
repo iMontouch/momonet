@@ -30,3 +30,9 @@ services:
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
+    networks:
+      - vlan
+networks:
+  vlan:
+    external:
+      name: vlan
