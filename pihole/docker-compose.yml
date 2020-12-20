@@ -1,21 +1,30 @@
+# Note: 192.168.1.xxx is an example network, you must update all these to match your own.
+# Thanks to http://tonylawrence.com/posts/unix/synology/free-your-synology-ports/ for your reference post
 version: "2"
 
-# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
 services:
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
     hostname: pihole
+    mac_address: d0:ca:ab:cd:ef:05
+    cap_add:
+      - NET_ADMIN
+    networks:
+      macvlan_NET:
+        ipv4_address: 192.168.178.200
     ports:
-      - "53:53/tcp"
-      - "53:53/udp"
-      - "67:67/udp"
-      - "80:80/tcp"
-      - "443:443/tcp"
+      - 443/tcp
+      - 53/tcp
+      - 53/udp
+      - 67/udp
+      - 80/tcp
     environment:
-      TZ: 'Europe/Berlin'
-      DNS1: '1.1.1.1'
-      DNS2: '8.8.8.8'
+      ServerIP: 192.168.178.200
+      DNS1: 127.0.0.1
+      DNS2: 1.1.1.1
+      TZ: Europe/Berlin
+      IPv6: 'false'
       DNS_BOGUS_PRIV: 'false'
       DNS_FQDN_REQUIRED: 'false'
       CONDITIONAL_FORWARDING: 'true'
@@ -23,17 +32,18 @@ services:
       CONDITIONAL_FORWARDING_DOMAIN: 'fritz.box'
       CONDITIONAL_FORWARDING_REVERSE: '192.168.in-addr.arpa'
       ServerIP: '192.168.178.200'
-    # Volumes store your data between container upgrades
-#    volumes:
-#      - '/opt/pi-hole/pihole/:/etc/pihole/'
-#      - '/opt/pi-hole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
-    cap_add:
-      - NET_ADMIN
+    volumes:
+      - /opt/pi-hole/pihole:/etc/pihole
+      - /opt/pi-hole/etc-dnsmasq.d:/etc/dnsmasq.d
     restart: unless-stopped
-    networks:
-      vlan:
-        ipv4_address: 192.168.178.200
+
 networks:
-  vlan:
-    external:
-      name: macvlan
+  macvlan_NET:
+    driver: macvlan
+    driver_opts:
+      parent: eth0
+    ipam:
+      config:
+        - subnet: 192.168.178.0/24
+          gateway: 192.168.178.1
+          ip_range: 192.168.178.192/26

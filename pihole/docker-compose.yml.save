@@ -1,0 +1,39 @@
+version: "2"
+
+# More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
+services:
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    hostname: pihole
+    ports:
+      - "53:53/tcp"
+      - "53:53/udp"
+      - "67:67/udp"
+      - "80:80/tcp"
+      - "443:443/tcp"
+    environment:
+      TZ: 'Europe/Berlin'
+      DNS1: '1.1.1.1'
+      DNS2: '8.8.8.8'
+      DNS_BOGUS_PRIV: 'false'
+      DNS_FQDN_REQUIRED: 'false'
+      CONDITIONAL_FORWARDING: 'true'
+      CONDITIONAL_FORWARDING_IP: '192.168.178.1'
+      CONDITIONAL_FORWARDING_DOMAIN: 'fritz.box'
+      CONDITIONAL_FORWARDING_REVERSE: '192.168.in-addr.arpa'
+      ServerIP: '192.168.178.200'
+    # Volumes store your data between container upgrades
+#    volumes:
+#      - '/opt/pi-hole/pihole/:/etc/pihole/'
+#      - '/opt/pi-hole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+    networks:
+      vlan:
+        ipv4_address: 192.168.178.200
+networks:
+  vlan:
+    external:
+      name: macvlan
