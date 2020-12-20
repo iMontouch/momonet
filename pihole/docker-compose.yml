@@ -1,4 +1,4 @@
-version: "3"
+version: "2"
 
 # More info at https://github.com/pi-hole/docker-pi-hole/ and https://docs.pi-hole.net/
 services:
@@ -24,9 +24,9 @@ services:
       CONDITIONAL_FORWARDING_REVERSE: '192.168.in-addr.arpa'
       ServerIP: '192.168.178.200'
     # Volumes store your data between container upgrades
-    volumes:
-      - './etc-pihole/:/etc/pihole/'
-      - './etc-dnsmasq.d/:/etc/dnsmasq.d/'
+#    volumes:
+#      - '/opt/pi-hole/pihole/:/etc/pihole/'
+#      - '/opt/pi-hole/etc-dnsmasq.d/:/etc/dnsmasq.d/'
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
@@ -35,5 +35,11 @@ services:
         ipv4_address: 192.168.178.200
 networks:
   vlan:
-    external:
-      name: vlan
+    driver: macvlan
+    driver_opts:
+      parents: eth0
+    ipam:
+      config:
+        - subnet: 192.168.178.0/24
+          gateway: 192.168.178.1
+          ip_range: 192.168.178.192/26
