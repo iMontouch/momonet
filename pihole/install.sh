@@ -1,1 +1,1 @@
-mkdir -p /opt/pi-hole/{pihole,dnsmasq}
+mkdir -p /opt/pi-hole
